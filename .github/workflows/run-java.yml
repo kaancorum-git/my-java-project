@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin' # Ensure this is correctly specified
+          distribution: temurin # Explicitly specify without quotes
 
       - name: Compile Java program
         run: javac src/Main.java
