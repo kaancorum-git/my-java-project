@@ -7,11 +7,11 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin' # Specify the JDK distribution (e.g., 'temurin', 'zulu', etc.)
-          java-version: '17'      # Specify the Java version
-          java-package: 'jdk'     # Specify the Java package (e.g., 'jdk', 'jre')
-          check-latest: false     # Optional: Whether to check for the latest version
-          server-id: github       # Optional: Server ID for Maven settings
+          distribution: 'temurin' # Ensure this is correctly specified
+          java-version: '17'
+          java-package: 'jdk'
+          check-latest: false
+          server-id: github
           server-username: ${{ secrets.GITHUB_ACTOR }}
           server-password: ${{ secrets.GITHUB_TOKEN }}
           overwrite-settings: true
