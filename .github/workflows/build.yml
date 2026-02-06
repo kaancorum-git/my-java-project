@@ -17,11 +17,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Load Token
-        run: |
-          TOKEN=$(grep 'java.priv' secrets/token.properties | cut -d'=' -f2)
-          echo "GITHUB_TOKEN=${TOKEN}" >> $GITHUB_ENV
+        with:
+          token: ${{ secrets.JAVA_PRIV }}
 
       - name: Set up Java
         uses: actions/setup-java@v3
