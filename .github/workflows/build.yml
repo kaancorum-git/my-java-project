@@ -4,14 +4,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.JAVA_PRIV }}
+
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: temurin # Explicitly specify without quotes
+          distribution: temurin
           java-version: '17'
-          java-package: 'jdk'
-          check-latest: false
-          server-id: github
-          server-username: ${{ secrets.GITHUB_ACTOR }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
-          overwrite-settings: true
+
+      - name: Build and run
+        run: |
+          javac -d out src/Main.java
+          java -cp out Main
