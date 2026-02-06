@@ -1,0 +1,14 @@
+# Ignore token files
+*.token
+secrets/
+.env
+secrets/token.properties
+
+# Ignore build outputs
+out/
+target/
+
+# Ignore IDE and OS-specific files
+*.idea/
+*.vscode/
+*.DS_Store

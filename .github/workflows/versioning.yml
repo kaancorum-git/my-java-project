@@ -17,8 +17,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.JAVA_PRIV }}
+
+      - name: Load Token
+        run: |
+          TOKEN=$(grep 'java.priv' secrets/token.properties | cut -d'=' -f2)
+          echo "GITHUB_TOKEN=${TOKEN}" >> $GITHUB_ENV
 
       - name: Get current tags
         run: |
@@ -45,7 +48,7 @@ jobs:
 
       - name: Create and push tag
         env:
-          GITHUB_TOKEN: ${{ secrets.JAVA_PRIV }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         run: |
           git tag ${{ env.NEW_TAG }}
           git push origin ${{ env.NEW_TAG }}
