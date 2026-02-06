@@ -1,0 +1,51 @@
+name: Versioning Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.JAVA_PRIV }}
+
+      - name: Get current tags
+        run: |
+          git fetch --tags
+          CURRENT_TAG=$(git tag --sort=-v:refname | head -n 1)
+          echo "CURRENT_TAG=${CURRENT_TAG:-0.0.0}" >> $GITHUB_ENV
+
+      - name: Calculate new tag
+        id: calculate_tag
+        run: |
+          CURRENT_TAG=${{ env.CURRENT_TAG }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT_TAG:-0.0.0}"
+
+          if [[ "${{ github.ref }}" == "refs/heads/main" && "${{ github.event_name }}" == "push" ]]; then
+            NEW_TAG="$((MAJOR + 1)).0.0"
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            NEW_TAG="$MAJOR.$((MINOR + 1)).0"
+          else
+            NEW_TAG="$MAJOR.$MINOR.$((PATCH + 1))"
+          fi
+
+          echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_ENV
+          echo "New tag will be: ${NEW_TAG}"
+
+      - name: Create and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.JAVA_PRIV }}
+        run: |
+          git tag ${{ env.NEW_TAG }}
+          git push origin ${{ env.NEW_TAG }}
