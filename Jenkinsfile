@@ -19,17 +19,17 @@ pipeline {
                         echo "Dev branch tag: ${devTag}"
                         echo "====================="
 
-                        // Check Java installation
+                        // Check Java installation and version
                         echo "Checking Java installation..."
-                        def javaCheck = sh(script: "java -version", returnStatus: true)
-                        if (javaCheck != 0) {
-                            echo "Java is not installed. Installing Java version: 17"
+                        def javaVersionOutput = sh(script: "java -version 2>&1", returnStdout: true).trim()
+                        if (javaVersionOutput.contains('17.')) {
+                            echo "Java 17 is already installed."
+                        } else {
+                            echo "Java 17 is not installed. Installing Java version: 17"
                             def installStatus = sh(script: "sudo apt-get update && sudo apt-get install -y openjdk-17-jdk", returnStatus: true)
                             if (installStatus != 0) {
                                 error("Java installation failed. Ensure the system has access to the package manager.")
                             }
-                        } else {
-                            echo "Java is already installed."
                         }
                     } catch (Exception e) {
                         echo "Error during environment setup: ${e.getMessage()}"
