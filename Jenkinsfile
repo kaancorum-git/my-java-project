@@ -10,16 +10,18 @@ pipeline {
         }
         stage('Debug Info') {
             steps {
-                // Fetch all tags and display the latest tags for the current branch
+                // Fetch and display the latest tags for the current branch, main, and dev
                 sh '''
-                echo "Fetching all tags..."
                 git fetch --tags
                 CURRENT_TAG=$(git describe --tags --abbrev=0 || echo "No tags found")
-                echo "Current tag: $CURRENT_TAG"
                 MAIN_TAG=$(git tag --sort=-v:refname | grep '^main-' | head -n 1 || echo "No main tag found")
                 DEV_TAG=$(git tag --sort=-v:refname | grep '^dev-' | head -n 1 || echo "No dev tag found")
+
+                echo "====================="
+                echo "Current branch tag: $CURRENT_TAG"
                 echo "Main branch tag: $MAIN_TAG"
                 echo "Dev branch tag: $DEV_TAG"
+                echo "====================="
                 '''
             }
         }
