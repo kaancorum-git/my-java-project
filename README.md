@@ -3,9 +3,11 @@
 This project is a simple Java application that demonstrates basic functionality and integration with CI/CD tools like Jenkins and GitHub Actions.
 
 ## Features
-- Prints "Hello, World!" and "Hello World 2" to the console.
+- Prints "Hello, World!" and "Hello World a211" to the console.
 - Includes a `Jenkinsfile` for CI/CD automation with Jenkins.
-- Configured with a GitHub Actions workflow for automated builds.
+- Configured with GitHub Actions workflows for:
+  - Automated builds (`build.yml`).
+  - Versioning and tagging (`versioning.yml`).
 
 ## Prerequisites
 To run this project, you need:
@@ -38,13 +40,20 @@ cd my-java-project
 - To use Jenkins:
   1. Add the repository to your Jenkins instance.
   2. Configure the pipeline to use the `Jenkinsfile`.
+  3. Builds can be triggered manually.
 
 ### GitHub Actions
-- The project includes a GitHub Actions workflow (`.github/workflows/build.yml`) for automated builds.
-- The workflow:
-  - Checks out the code.
-  - Sets up Java 17.
-  - Builds and runs the program.
+- The project includes multiple GitHub Actions workflows:
+  - **Build Workflow (`build.yml`)**:
+    - Checks out the code.
+    - Sets up Java 17.
+    - Builds and runs the program.
+  - **Versioning Workflow (`versioning.yml`)**:
+    - Automatically creates and pushes tags based on branch and event type.
+    - Tags follow semantic versioning:
+      - `main` branch increments the major version.
+      - `dev` branch increments the minor version.
+      - Pull requests increment the patch version.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
