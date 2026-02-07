@@ -7,17 +7,11 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Environment Setup and Debug') {
             steps {
-                // Pull the code from the repository
-                checkout scm
-            }
-        }
-        stage('Debug Info') {
-            steps {
-                // Fetch and display the latest tags for the current branch, main, and dev
                 script {
                     try {
+                        // Fetch and display the latest tags for the current branch, main, and dev
                         def currentTag = sh(script: "git fetch --tags && git describe --tags --abbrev=0 || echo 'No tags found'", returnStdout: true).trim()
                         def mainTag = sh(script: "git fetch origin main && git describe --tags origin/main --abbrev=0 || echo 'No main tag found'", returnStdout: true).trim()
                         def devTag = sh(script: "git fetch origin dev && git describe --tags origin/dev --abbrev=0 || echo 'No dev tag found'", returnStdout: true).trim()
@@ -27,25 +21,21 @@ pipeline {
                         echo "Main branch tag: ${mainTag}"
                         echo "Dev branch tag: ${devTag}"
                         echo "====================="
+
+                        // Check Java installation
+                        echo "Checking Java installation..."
+                        sh "java -version || echo 'Java is not installed.'"
+                        echo "Installing Java version: ${params.JAVA_VERSION}"
+                        sh "sudo apt-get update && sudo apt-get install -y openjdk-${params.JAVA_VERSION}-jdk || error('Java installation failed.')"
                     } catch (Exception e) {
-                        echo "Error fetching tags: ${e.getMessage()}"
-                        error("Failed to fetch tags. Ensure the repository has valid tags.")
+                        echo "Error during environment setup: ${e.getMessage()}"
+                        error("Environment setup failed. Ensure all dependencies are installed.")
                     }
                 }
             }
         }
-        stage('Set Up Java') {
-            steps {
-                // Set up Java dynamically based on the parameter
-                script {
-                    echo "Setting up Java version: ${params.JAVA_VERSION}"
-                }
-                sh "sdk install java ${params.JAVA_VERSION} || echo 'Java installation failed. Ensure SDKMAN is installed.'"
-            }
-        }
         stage('Build') {
             steps {
-                // Compile the Java code
                 script {
                     try {
                         echo "Building the Java project..."
@@ -59,7 +49,6 @@ pipeline {
         }
         stage('Run') {
             steps {
-                // Run the compiled Java program
                 script {
                     try {
                         echo "Running the Java program..."
