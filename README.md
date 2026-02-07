@@ -40,7 +40,7 @@ cd my-java-project
 - To use Jenkins:
   1. Add the repository to your Jenkins instance.
   2. Configure the pipeline to use the `Jenkinsfile`.
-  3. Builds can be triggered manually.
+  3. Builds can be triggered manually or via GitHub Actions.
 
 ### GitHub Actions
 - The project includes multiple GitHub Actions workflows:
@@ -50,10 +50,16 @@ cd my-java-project
     - Builds and runs the program.
   - **Versioning Workflow (`versioning.yml`)**:
     - Automatically creates and pushes tags based on branch and event type.
-    - Tags follow semantic versioning:
-      - `main` branch increments the major version.
-      - `dev` branch increments the minor version.
-      - Pull requests increment the patch version.
+    - **Versioning Logic**:
+      - `main` branch:
+        - Direct pushes increment the tag by `0.01` (e.g., `3.01`, `3.02`).
+        - PRs merged into `main` increment the **major version** (e.g., `3.0.0` → `4.0.0`).
+      - `dev` branch:
+        - Direct pushes increment the tag by `0.01` (e.g., `3.35` → `3.36`).
+        - PRs merged into `dev` increment the tag by `0.01`.
+      - Feature branches:
+        - Inherit the current `dev` tag (e.g., `3.35`).
+        - Tags do not change for feature branches unless merged into `dev` or `main`.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
