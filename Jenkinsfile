@@ -21,9 +21,16 @@ pipeline {
 
                         // Check Java installation
                         echo "Checking Java installation..."
-                        sh "java -version || echo 'Java is not installed.'"
-                        echo "Installing Java version: 17"
-                        sh "sudo apt-get update && sudo apt-get install -y openjdk-17-jdk || error('Java installation failed.')"
+                        def javaCheck = sh(script: "java -version", returnStatus: true)
+                        if (javaCheck != 0) {
+                            echo "Java is not installed. Installing Java version: 17"
+                            def installStatus = sh(script: "sudo apt-get update && sudo apt-get install -y openjdk-17-jdk", returnStatus: true)
+                            if (installStatus != 0) {
+                                error("Java installation failed. Ensure the system has access to the package manager.")
+                            }
+                        } else {
+                            echo "Java is already installed."
+                        }
                     } catch (Exception e) {
                         echo "Error during environment setup: ${e.getMessage()}"
                         error("Environment setup failed. Ensure all dependencies are installed.")
