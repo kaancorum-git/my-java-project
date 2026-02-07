@@ -11,18 +11,17 @@ pipeline {
         stage('Debug Info') {
             steps {
                 // Fetch and display the latest tags for the current branch, main, and dev
-                sh '''
-                git fetch --tags
-                CURRENT_TAG=$(git describe --tags --abbrev=0 || echo "No tags found")
-                MAIN_TAG=$(git tag --sort=-v:refname | grep '^main-' | head -n 1 || echo "No main tag found")
-                DEV_TAG=$(git tag --sort=-v:refname | grep '^dev-' | head -n 1 || echo "No dev tag found")
+                script {
+                    def currentTag = sh(script: "git fetch --tags && git describe --tags --abbrev=0 || echo 'No tags found'", returnStdout: true).trim()
+                    def mainTag = sh(script: "git tag --sort=-v:refname | head -n 1 || echo 'No main tag found'", returnStdout: true).trim()
+                    def devTag = sh(script: "git tag --sort=-v:refname | head -n 1 || echo 'No dev tag found'", returnStdout: true).trim()
 
-                echo "====================="
-                echo "Current branch tag: $CURRENT_TAG"
-                echo "Main branch tag: $MAIN_TAG"
-                echo "Dev branch tag: $DEV_TAG"
-                echo "====================="
-                '''
+                    echo "====================="
+                    echo "Current branch tag: ${currentTag}"
+                    echo "Main branch tag: ${mainTag}"
+                    echo "Dev branch tag: ${devTag}"
+                    echo "====================="
+                }
             }
         }
         stage('Build') {
