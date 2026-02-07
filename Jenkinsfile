@@ -6,6 +6,21 @@ pipeline {
     }
 
     stages {
+        stage('Debug Docker Access') {
+            steps {
+                script {
+                    try {
+                        echo "Checking Docker installation..."
+                        sh 'docker --version || echo "Docker is not installed or not in PATH"'
+                        sh 'which docker || echo "Docker binary not found"'
+                        sh 'docker ps || echo "Docker daemon is not running or Jenkins user lacks permissions"'
+                    } catch (Exception e) {
+                        echo "Docker debug failed: ${e.getMessage()}"
+                        error("Failed to verify Docker access.")
+                    }
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
