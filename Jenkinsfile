@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
+        PATH = "${env.PATH}:${env.DOCKER_BIN}" // Add DOCKER_BIN to the PATH globally
     }
 
     stages {
@@ -34,8 +35,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Updating PATH to include DOCKER_BIN..."
-                        export PATH=$(dirname $DOCKER_BIN):$PATH
                         echo "Updated PATH: $PATH"
                         which docker || echo "Docker binary not found"
                         docker --version || echo "Docker is not installed or not in PATH"
@@ -50,7 +49,7 @@ pipeline {
                 script {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         echo "Checking Docker version..."
-                        sh '$DOCKER_BIN --version || echo "Docker is not installed or not in PATH"'
+                        sh 'docker --version || echo "Docker is not installed or not in PATH"'
                     }
                 }
             }
@@ -81,7 +80,6 @@ pipeline {
                     try {
                         echo "Building the Docker image with the specified Dockerfile..."
                         sh '''
-                            export PATH=$(dirname $DOCKER_BIN):$PATH
                             docker build -t my-java-nginx-project:latest -f Dockerfile .
                         '''
                     } catch (Exception e) {
@@ -97,7 +95,6 @@ pipeline {
                     try {
                         echo "Running the Docker container on port 80..."
                         sh '''
-                            export PATH=$(dirname $DOCKER_BIN):$PATH
                             docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
                         '''
                     } catch (Exception e) {
