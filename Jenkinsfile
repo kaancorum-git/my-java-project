@@ -50,6 +50,18 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
+                    echo "Stopping any existing container on port 80..."
+                    sh '''
+                        docker ps -a
+                        existing_container=$(docker ps --filter "publish=80" --format "{{.ID}}")
+                        if [ ! -z "$existing_container" ]; then
+                            echo "Stopping and removing existing container..."
+                            docker stop $existing_container
+                            docker rm $existing_container
+                            docker ps -a
+                        fi
+                    '''
+
                     echo "Running the Docker container..."
                     sh '''
                         docker ps -a
