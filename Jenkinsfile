@@ -14,7 +14,7 @@ pipeline {
                     sh '''
                         echo "Path: $PATH"
                         echo "docker bin: $DOCKER_BIN"
-                        whşch docker
+                        which docker
                         echo "Current User: $(whoami)"
                         echo "Home Directory: $HOME"
                         echo "Current Directory: $(pwd)"
