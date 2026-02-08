@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
+    }
+
     stages {
         stage('Info') {
             steps {
@@ -30,8 +34,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        alias docker=$DOCKER_BIN
-                        echo $PATH
+                        echo "Updating PATH to include DOCKER_BIN..."
+                        export PATH=$(dirname $DOCKER_BIN):$PATH
+                        echo "Updated PATH: $PATH"
                         which docker || echo "Docker binary not found"
                         docker --version || echo "Docker is not installed or not in PATH"
                     '''
