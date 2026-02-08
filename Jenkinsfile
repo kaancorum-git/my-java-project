@@ -35,6 +35,8 @@ pipeline {
                 script {
                     sh '''
                         echo "Updating PATH to include DOCKER_BIN..."
+                        export PATH=$(dirname $DOCKER_BIN):$PATH
+                        echo "Updated PATH: $PATH"
                         which docker || echo "Docker binary not found"
                         docker --version || echo "Docker is not installed or not in PATH"
                         echo "docker ps"
