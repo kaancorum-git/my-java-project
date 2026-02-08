@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
-        PATH = "${env.PATH}:${env.DOCKER_BIN}/.." // Add the directory of DOCKER_BIN to the PATH globally
+        PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
     }
 
     stages {
@@ -12,6 +12,9 @@ pipeline {
                 script {
                     echo "Gathering system information..."
                     sh '''
+                        echo "Path: $PATH"
+                        echo "docker bin: $DOCKER_BIN"
+                        whşch docker
                         echo "Current User: $(whoami)"
                         echo "Home Directory: $HOME"
                         echo "Current Directory: $(pwd)"
