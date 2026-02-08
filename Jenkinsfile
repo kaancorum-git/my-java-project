@@ -7,85 +7,59 @@ pipeline {
     }
 
     stages {
-        stage('Info') {
+        stage('Debug and Info') {
             steps {
                 script {
-                    echo "Gathering system information..."
+                    echo "Gathering system information and debugging..."
+
+                    // System Information
                     sh '''
                         echo "Path: $PATH"
-                        echo "docker bin: $DOCKER_BIN"
+                        echo "Docker binary: $DOCKER_BIN"
                         which docker
                         docker --version
+                        echo "Current User: $(whoami)"
+                        echo "Home Directory: $HOME"
+                        echo "Current Directory: $(pwd)"
+                        echo "Environment Variables:"
+                        printenv
+                        echo "Available Disk Space:"
+                        df -h
+                        echo "Memory Usage:"
+                        free -h || vm_stat || echo "Memory info not available"
+                        echo "Java Version:"
+                        java -version || echo "Java is not installed"
+                        echo "Git Version:"
+                        git --version || echo "Git is not installed"
                     '''
-                }
-            }
-        }
-        stage('Debug Docker Access') {
-            steps {
-                script {
+
+                    // Docker Debugging
                     sh '''
-                        echo "Updated PATH: $PATH"
-                        which docker || echo "Docker binary not found"
-                        docker --version || echo "Docker is not installed or not in PATH"
-                        echo "docker ps"
+                        echo "Checking Docker containers..."
                         docker ps -a
+                        echo "Stopping any existing container on port 80..."
+                        existing_container=$(docker ps --filter "publish=80" --format "{{.ID}}")
+                        if [ ! -z "$existing_container" ]; then
+                            docker stop $existing_container
+                            docker rm $existing_container
+                        fi
                     '''
-                }
-            }
-        }
-        stage('Check Docker Version') {
-            steps {
-                script {
-                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                        echo "Checking Docker version..."
-                        sh 'docker --version || echo "Docker is not installed or not in PATH"'
-                    }
-                }
-            }
-        }
-        stage('Stop Existing Container') {
-            steps {
-                script {
-                    echo "Checking if port 80 is in use..."
-                    def portInUse = sh(script: "lsof -i :80 || true", returnStdout: true).trim()
-                    if (portInUse) {
-                        echo "Port 80 is in use. Stopping any existing container using port 80..."
-                        sh '''
-                            existing_container=$(docker ps --filter "publish=80" --format "{{.ID}}")
-                            if [ ! -z "$existing_container" ]; then
-                                docker stop $existing_container
-                                docker rm $existing_container
-                            fi
-                        '''
-                    } else {
-                        echo "Port 80 is available."
-                    }
-                }
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
+
+                    // Build Docker Image
                     echo "Building the Docker image..."
                     sh '''
                         docker build -t my-java-nginx-project:latest -f Dockerfile .
+                        docker ps -a
                     '''
-                }
-            }
-        }
-        stage('Run Docker Container') {
-            steps {
-                script {
+
+                    // Run Docker Container
                     echo "Running the Docker container..."
                     sh '''
                         docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
+                        docker ps -a
                     '''
-                }
-            }
-        }
-        stage('Debug Nginx Container') {
-            steps {
-                script {
+
+                    // Inspect Nginx Container
                     echo "Inspecting the Nginx container..."
                     sh '''
                         docker exec my-java-nginx-project ls -l /usr/share/nginx/html
@@ -93,26 +67,13 @@ pipeline {
                         docker exec my-java-nginx-project cat /etc/nginx/nginx.conf
                         docker logs my-java-nginx-project
                     '''
-                }
-            }
-        }
-        stage('Build Java Project') {
-            steps {
-                script {
-                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                        echo "Building the Java project..."
-                        sh 'javac -d out src/Main.java'
-                    }
-                }
-            }
-        }
-        stage('Run Java Project') {
-            steps {
-                script {
-                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                        echo "Running the Java program..."
-                        sh 'java -cp out Main'
-                    }
+
+                    // Build and Run Java Project
+                    echo "Building and running the Java project..."
+                    sh '''
+                        javac -d out src/Main.java
+                        java -cp out Main
+                    '''
                 }
             }
         }
