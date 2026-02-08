@@ -38,7 +38,7 @@ pipeline {
                         which docker || echo "Docker binary not found"
                         docker --version || echo "Docker is not installed or not in PATH"
                         echo "docker ps"
-                        echo "docker ps -a"
+                        docker ps -a
                     '''
                 }
             }
