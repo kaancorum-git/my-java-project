@@ -13,5 +13,5 @@ COPY static/ /usr/share/nginx/html/
 # Expose port 80 for Nginx
 EXPOSE 80
 
-# Start Nginx (default CMD in the Nginx base image)
-CMD ["nginx", "-g", "daemon off;"]
+# Start Nginx with the custom configuration
+CMD ["nginx", "-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
