@@ -20,6 +20,8 @@ pipeline {
                         java -version || echo "Java is not installed"
                         echo "Git Version:"
                         git --version || echo "Git is not installed"
+                        echo "Docker BIN:"
+                        echo "DOCKER_BIN: $DOCKER_BIN"
                     '''
                 }
             }
@@ -29,7 +31,7 @@ pipeline {
                 script {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         echo "Checking Docker version..."
-                        sh 'docker --version || echo "Docker is not installed or not in PATH"'
+                        sh '$DOCKER_BIN --version || echo "Docker is not installed or not in PATH"'
                     }
                 }
             }
