@@ -7,10 +7,10 @@ pipeline {
     }
 
     stages {
-        stage('Debug and Info') {
+        stage('Info') {
             steps {
                 script {
-                    echo "Gathering system information and debugging..."
+                    echo "Gathering system information..."
 
                     // System Information
                     sh '''
@@ -32,47 +32,51 @@ pipeline {
                         echo "Git Version:"
                         git --version || echo "Git is not installed"
                     '''
-
-                    // Docker Debugging
-                    sh '''
-                        echo "Checking Docker containers..."
-                        docker ps -a
-                        echo "Stopping any existing container on port 80..."
-                        existing_container=$(docker ps --filter "publish=80" --format "{{.ID}}")
-                        if [ ! -z "$existing_container" ]; then
-                            docker stop $existing_container
-                            docker rm $existing_container
-                        fi
-                    '''
-
-                    // Build Docker Image
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
                     echo "Building the Docker image..."
                     sh '''
+                        docker ps -a
                         docker build -t my-java-nginx-project:latest -f Dockerfile .
                         docker ps -a
                     '''
-
-                    // Run Docker Container
+                }
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                script {
                     echo "Running the Docker container..."
                     sh '''
+                        docker ps -a
                         docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
                         docker ps -a
                     '''
-
-                    // Inspect Nginx Container
-                    echo "Inspecting the Nginx container..."
-                    sh '''
-                        docker exec my-java-nginx-project ls -l /usr/share/nginx/html
-                        docker exec my-java-nginx-project cat /usr/share/nginx/html/index.html || echo "index.html not found"
-                        docker exec my-java-nginx-project cat /etc/nginx/nginx.conf
-                        docker logs my-java-nginx-project
-                    '''
-
-                    // Build and Run Java Project
-                    echo "Building and running the Java project..."
+                }
+            }
+        }
+        stage('Build Java Project') {
+            steps {
+                script {
+                    echo "Building the Java project..."
                     sh '''
                         javac -d out src/Main.java
+                        echo "Java build completed."
+                    '''
+                }
+            }
+        }
+        stage('Run Java Project') {
+            steps {
+                script {
+                    echo "Running the Java program..."
+                    sh '''
                         java -cp out Main
+                        echo "Java program execution completed."
                     '''
                 }
             }
