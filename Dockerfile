@@ -1,6 +1,9 @@
 # Use the official Nginx base image
 FROM nginx:latest
 
+# Remove the default configuration
+RUN rm -f /etc/nginx/conf.d/default.conf
+
 # Copy the custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
