@@ -45,6 +45,26 @@ pipeline {
                 }
             }
         }
+        stage('Stop Existing Container') {
+            steps {
+                script {
+                    echo "Checking if port 80 is in use..."
+                    def portInUse = sh(script: "lsof -i :80 || true", returnStdout: true).trim()
+                    if (portInUse) {
+                        echo "Port 80 is in use. Stopping any existing container using port 80..."
+                        sh '''
+                            existing_container=$(docker ps --filter "publish=80" --format "{{.ID}}")
+                            if [ ! -z "$existing_container" ]; then
+                                docker stop $existing_container
+                                docker rm $existing_container
+                            fi
+                        '''
+                    } else {
+                        echo "Port 80 is available."
+                    }
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
@@ -62,7 +82,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        echo "Running the Docker container..."
+                        echo "Running the Docker container on port 80..."
                         sh '$DOCKER_BIN run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest'
                     } catch (Exception e) {
                         echo "Docker run failed: ${e.getMessage()}"
