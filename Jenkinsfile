@@ -29,9 +29,12 @@ pipeline {
         stage('Debug Docker Access') {
             steps {
                 script {
-                    sh 'echo $PATH'
-                    sh 'which docker || echo "Docker binary not found"'
-                    sh 'docker --version || echo "Docker is not installed or not in PATH"'
+                    sh '''
+                        alias docker=$DOCKER_BIN
+                        echo $PATH
+                        which docker || echo "Docker binary not found"
+                        docker --version || echo "Docker is not installed or not in PATH"
+                    '''
                 }
             }
         }
@@ -70,7 +73,10 @@ pipeline {
                 script {
                     try {
                         echo "Building the Docker image with the specified Dockerfile..."
-                        sh '$DOCKER_BIN build -t my-java-nginx-project:latest -f Dockerfile .'
+                        sh '''
+                            export PATH=$(dirname $DOCKER_BIN):$PATH
+                            docker build -t my-java-nginx-project:latest -f Dockerfile .
+                        '''
                     } catch (Exception e) {
                         echo "Docker build failed: ${e.getMessage()}"
                         error("Failed to build the Docker image.")
@@ -83,7 +89,10 @@ pipeline {
                 script {
                     try {
                         echo "Running the Docker container on port 80..."
-                        sh '$DOCKER_BIN run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest'
+                        sh '''
+                            export PATH=$(dirname $DOCKER_BIN):$PATH
+                            docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
+                        '''
                     } catch (Exception e) {
                         echo "Docker run failed: ${e.getMessage()}"
                         error("Failed to run the Docker container.")
