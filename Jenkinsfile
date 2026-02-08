@@ -26,6 +26,15 @@ pipeline {
                 }
             }
         }
+        stage('Debug Docker Access') {
+            steps {
+                script {
+                    sh 'echo $PATH'
+                    sh 'which docker || echo "Docker binary not found"'
+                    sh 'docker --version || echo "Docker is not installed or not in PATH"'
+                }
+            }
+        }
         stage('Check Docker Version') {
             steps {
                 script {
@@ -40,8 +49,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        echo "Building the Docker image with Java 17 and Nginx..."
-                        sh '$DOCKER_BIN build -t my-java-nginx-project:latest .'
+                        echo "Building the Docker image with the specified Dockerfile..."
+                        sh '$DOCKER_BIN build -t my-java-nginx-project:latest -f Dockerfile .'
                     } catch (Exception e) {
                         echo "Docker build failed: ${e.getMessage()}"
                         error("Failed to build the Docker image.")
