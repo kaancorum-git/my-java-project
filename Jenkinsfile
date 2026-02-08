@@ -15,21 +15,7 @@ pipeline {
                         echo "Path: $PATH"
                         echo "docker bin: $DOCKER_BIN"
                         which docker
-                        echo "Current User: $(whoami)"
-                        echo "Home Directory: $HOME"
-                        echo "Current Directory: $(pwd)"
-                        echo "Environment Variables:"
-                        printenv
-                        echo "Available Disk Space:"
-                        df -h
-                        echo "Memory Usage:"
-                        free -h || vm_stat || echo "Memory info not available"
-                        echo "Java Version:"
-                        java -version || echo "Java is not installed"
-                        echo "Git Version:"
-                        git --version || echo "Git is not installed"
-                        echo "Docker BIN:"
-                        echo "DOCKER_BIN: $DOCKER_BIN"
+                        docker --version
                     '''
                 }
             }
@@ -80,30 +66,33 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    try {
-                        echo "Building the Docker image with the specified Dockerfile..."
-                        sh '''
-                            docker build -t my-java-nginx-project:latest -f Dockerfile .
-                        '''
-                    } catch (Exception e) {
-                        echo "Docker build failed: ${e.getMessage()}"
-                        error("Failed to build the Docker image.")
-                    }
+                    echo "Building the Docker image..."
+                    sh '''
+                        docker build -t my-java-nginx-project:latest -f Dockerfile .
+                    '''
                 }
             }
         }
         stage('Run Docker Container') {
             steps {
                 script {
-                    try {
-                        echo "Running the Docker container on port 80..."
-                        sh '''
-                            docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
-                        '''
-                    } catch (Exception e) {
-                        echo "Docker run failed: ${e.getMessage()}"
-                        error("Failed to run the Docker container.")
-                    }
+                    echo "Running the Docker container..."
+                    sh '''
+                        docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
+                    '''
+                }
+            }
+        }
+        stage('Debug Nginx Container') {
+            steps {
+                script {
+                    echo "Inspecting the Nginx container..."
+                    sh '''
+                        docker exec my-java-nginx-project ls -l /usr/share/nginx/html
+                        docker exec my-java-nginx-project cat /usr/share/nginx/html/index.html || echo "index.html not found"
+                        docker exec my-java-nginx-project cat /etc/nginx/nginx.conf
+                        docker logs my-java-nginx-project
+                    '''
                 }
             }
         }
