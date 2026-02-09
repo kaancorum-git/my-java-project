@@ -20,6 +20,13 @@
         a:hover {
             color: #45a049;
         }
+        .links {
+            margin-top: 20px;
+        }
+        .links a {
+            display: block;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -27,6 +34,14 @@
     <p th:text="${description}"></p>
     <p>Build Number: <span th:text="${buildNumber}"></span></p>
     <p>Branch Name: <span th:text="${branchName}"></span></p>
-    <p><a href="/tutorial">Go to Tutorial Page</a></p>
+
+    <div class="links">
+        <h2>Explore Our Pages</h2>
+        <a href="/tutorial">Go to Tutorial Page</a>
+        <a href="/about">About Us</a>
+        <a href="/contact">Contact Us</a>
+        <a href="/services">Our Services</a>
+        <a href="/gallery">Gallery</a>
+    </div>
 </body>
 </html>
