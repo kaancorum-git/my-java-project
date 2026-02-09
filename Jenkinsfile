@@ -1,12 +1,16 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'The branch name to use')
+    }
+
     environment {
         PROJECT_NAME = "my-java-nginx-project" // The base name of the project
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
         DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
-        //BRANCH_NAME = "${env.BRANCH_NAME ?: 'latest'}" // Use the branch name or default to 'latest'
+        BRANCH_NAME = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim() // Dynamically retrieve the branch name
     }
 
     stages {
