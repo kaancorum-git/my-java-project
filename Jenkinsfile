@@ -6,6 +6,7 @@ pipeline {
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
         DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
+        BRANCH_NAME = "${env.BRANCH_NAME}"
     }
 
     stages {
@@ -24,16 +25,7 @@ pipeline {
             steps {
                 script {
                     echo "Checking out the code..."
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/${env.BRANCH_NAME}']],
-                        userRemoteConfigs: [[
-                            url: 'https://github.com/kaancorum/my-java-project.git',
-                            refspec: '+refs/heads/*:refs/remotes/origin/*'
-                        ]],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'LocalBranch', localBranch: '${env.BRANCH_NAME}']] // Ensure the branch is checked out locally
-                    ])
+                    checkout scm // Simplified checkout step
                 }
             }
         }
