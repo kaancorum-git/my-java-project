@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${title}">Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3e5f5;
+            color: #333;
+        }
+        h1 {
+            color: #8e24aa;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <p th:text="${description}"></p>
+    <ul>
+        <li>Service 1: Description</li>
+        <li>Service 2: Description</li>
+        <li>Service 3: Description</li>
+    </ul>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
