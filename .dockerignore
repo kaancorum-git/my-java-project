@@ -1,0 +1,11 @@
+# Ignore Maven build directories
+#target/
+
+# Ignore IDE and OS-specific files
+*.idea/
+*.vscode/
+*.DS_Store
+
+# Ignore sensitive files
+.env
+*.token

@@ -2,10 +2,16 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME = "my-java-nginx-project" // The base name of the project
-        DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
-        PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
-        DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
+
+        PROJECT_NAME = "my-java-spring-project"
+        JAVA_HOME  = "/opt/homebrew/opt/openjdk@17"
+        DOCKER_BIN = "/usr/local/bin/docker"
+        MAVEN_BIN  = "/opt/homebrew/bin/mvn"
+        PATH = "${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:" +
+           "${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}:" +
+           "${env.PATH}"
+        //PATH = "${env.PATH}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven'ın bin dizinini ekle
+        DOCKER_HUB_CREDENTIALS_USR = "kncrm"
         BRANCH_NAME = "${env.BRANCH_NAME}"
     }
 
@@ -13,11 +19,30 @@ pipeline {
         stage('Debug Environment Variables') {
             steps {
                 script {
+                    sh 'uname -a'
+                    sh 'ls -la /opt/homebrew'
+                    sh 'which mvn || true'
                     echo "Printing all environment variables..."
                     sh 'printenv | sort'
                     echo "Git version:"
                     sh 'git --version'
+                    echo "Maven version:"
+                    sh 'mvn -v' // MAVEN_BIN kullanıldı
+                    echo "Docker version:"
+                    sh 'docker --version'
+                    sh 'which docker'
                     echo "Branch Name: ${env.BRANCH_NAME}"
+                }
+            }
+        }
+        stage('Prepare Build Info') {
+            steps {
+                script {
+                    echo "Writing build info..."
+                    sh '''
+                        echo "build.number=${BUILD_NUMBER}" > build-info.properties
+                        echo "branch.name=${BRANCH_NAME}" >> build-info.properties
+                    '''
                 }
             }
         }
@@ -25,16 +50,17 @@ pipeline {
             steps {
                 script {
                     echo "Checking out the code..."
-                    checkout scm // Simplified checkout step
+                    checkout scm
                 }
             }
         }
-        stage('Retrieve Branch Name') {
+        stage('Build Spring Boot JAR') {
             steps {
                 script {
-                    // Dynamically retrieve the branch name using git
-                    env.BRANCH_NAME = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    echo "Branch Name: ${env.BRANCH_NAME}"
+                    echo "Building the Spring Boot JAR file..."
+                    sh '''
+                        ${MAVEN_BIN} clean package
+                    '''
                 }
             }
         }
@@ -43,7 +69,7 @@ pipeline {
                 script {
                     echo "Building the Docker image for branch: ${env.BRANCH_NAME}..."
                     sh '''
-                        docker build -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
+                        docker build --build-arg BUILD_NUMBER=${BUILD_NUMBER} --build-arg BRANCH_NAME=${BRANCH_NAME} -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
                     '''
                 }
             }

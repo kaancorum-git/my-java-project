@@ -1,20 +1,30 @@
-# Use the official Nginx base image
-FROM nginx:latest
+# Use a valid OpenJDK base image
+FROM amazoncorretto:17
 
-# Remove the default configuration
-#RUN rm -f /etc/nginx/conf.d/default.conf
+# Set the working directory
+WORKDIR /app
 
-# Copy the custom Nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Print the current working directory
+RUN pwd
 
-# Copy static files to the default Nginx directory
-COPY static/ /usr/share/nginx/html/tutorial/
+# Debugging: List files in the target directory
+RUN ls -l
 
-# Generate a random 5-digit number using shuf and append it to the index.html file
-RUN sh -c 'echo "<p>Random Number: $(shuf -i 10000-99999 -n 1)</p>" >> /usr/share/nginx/html/tutorial/index.html'
+# Copy build info to the container
+ARG BUILD_NUMBER
+ARG BRANCH_NAME
+RUN echo "build.number=${BUILD_NUMBER}" > /app/build-info.properties
+RUN echo "branch.name=${BRANCH_NAME}" >> /app/build-info.properties
 
-# Expose port 80 for Nginx
+# Copy the repackaged JAR file to the container
+COPY target/my-java-project-1.0.0.jar app.jar
+
+# Expose port 80 for the Spring Boot application
 EXPOSE 80
 
-# Start Nginx with the custom configuration
-CMD ["nginx", "-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
+# Add a health check to verify the application is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:80/actuator/health || exit 1
+
+# Run the Spring Boot application
+CMD ["java", "-jar", "app.jar"]
