@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${title}">Tutorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <p th:text="${content}"></p>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
