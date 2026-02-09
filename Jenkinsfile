@@ -8,7 +8,7 @@ pipeline {
         PATH = "${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:" +
            "${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}:" +
            "${env.PATH}"
-        PATH = "${env.PATH}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven'ın bin dizinini ekle
+        //PATH = "${env.PATH}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven'ın bin dizinini ekle
         DOCKER_HUB_CREDENTIALS_USR = "kncrm"
         BRANCH_NAME = "${env.BRANCH_NAME}"
     }
