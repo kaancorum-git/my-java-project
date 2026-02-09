@@ -14,6 +14,7 @@ pipeline {
                 script {
                     echo "Printing all environment variables..."
                     sh 'printenv | sort'
+                    sh 'git --version'
                 }
             }
         }
