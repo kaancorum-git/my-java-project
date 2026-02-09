@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
+
         PROJECT_NAME = "my-java-spring-project"
+        JAVA_HOME  = "/opt/homebrew/opt/openjdk@17"
         DOCKER_BIN = "/usr/local/bin/docker"
         MAVEN_BIN  = "/opt/homebrew/bin/mvn"
         PATH = "${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:" +
