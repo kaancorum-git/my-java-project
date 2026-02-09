@@ -1,86 +1,125 @@
-# My Java Project
+# My Java Spring Project
 
-This project is a simple Java application that demonstrates basic functionality and integration with CI/CD tools like Jenkins and GitHub Actions. It also includes an Nginx server running in a Docker container to serve static files.
+This is a demo Spring Boot project showcasing a simple web application with Thymeleaf templates, Docker integration, and Jenkins pipeline automation.
 
 ## Features
-- Prints "Hello, World!" to the console.
-- Checks if the Nginx-served page is accessible and prints its content.
-- Includes a `Jenkinsfile` for CI/CD automation with Jenkins.
-- Configured with GitHub Actions workflows for:
-  - Automated builds (`build.yml`).
-  - Versioning and tagging (`versioning.yml`).
-- Serves static files using Nginx in a Docker container.
+- **Spring Boot**: Backend framework for building Java-based web applications.
+- **Thymeleaf**: Templating engine for rendering dynamic HTML pages.
+- **Docker**: Containerization for easy deployment.
+- **Jenkins**: CI/CD pipeline for automated builds and deployments.
+
+---
 
 ## Prerequisites
-To run this project, you need:
-- **Java 17** or higher installed.
-- A Java compiler (`javac`).
-- Docker installed and running.
-- Git (optional, for cloning the repository).
+Make sure you have the following installed:
+- **Java 17** or higher
+- **Maven** (e.g., `/opt/homebrew/bin/mvn`)
+- **Docker** (e.g., `/usr/local/bin/docker`)
+- **Jenkins** (optional, for CI/CD)
+
+---
 
 ## Getting Started
 
-### Clone the Repository
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/kaancorum/my-java-project.git
+git clone https://github.com/your-username/my-java-project.git
 cd my-java-project
 ```
 
-### Compile and Run the Java Application
-1. Compile the Java code:
-   ```bash
-   javac -d out src/Main.java
-   ```
-2. Run the compiled program:
-   ```bash
-   java -cp out Main
-   ```
+### 2. Build the Project
+Use Maven to build the project:
+```bash
+mvn clean package
+```
 
-### Build and Run the Docker Container
-1. Build the Docker image:
-   ```bash
-   docker build -t my-java-nginx-project:latest .
-   ```
-2. Run the Docker container:
-   ```bash
-   docker run -d -p 80:80 --name my-java-nginx-project my-java-nginx-project:latest
-   ```
-3. Access the Nginx server:
-   - Open a browser and go to `http://localhost/`.
-   - You should see the content of the `index.html` file served by Nginx.
+### 3. Run the Application Locally
+Run the Spring Boot application:
+```bash
+java -jar target/my-java-project-1.0.0.jar
+```
 
-### Debugging
-- To inspect the running container:
-  ```bash
-  docker exec -it my-java-nginx-project sh
-  ```
-- To check the logs:
-  ```bash
-  docker logs my-java-nginx-project
-  ```
+Access the application at [http://localhost:8080](http://localhost:8080).
 
-## CI/CD Integration
+---
 
-### Jenkins
-- The project includes a `Jenkinsfile` for automating builds and running the program.
-- Key stages in the Jenkins pipeline:
-  - **Info**: Gathers system information and prints environment details.
-  - **Build Docker Image**: Builds the Docker image for the Nginx server.
-  - **Run Docker Container**: Stops any existing container on port `80` and runs a new one.
-  - **Build Java Project**: Compiles the Java application.
-  - **Run Java Project**: Executes the compiled Java program.
+## Docker Integration
 
-### GitHub Actions
-- The project includes multiple GitHub Actions workflows:
-  - **Build Workflow (`build.yml`)**:
-    - Checks out the code.
-    - Sets up Java 17.
-    - Builds and runs the Java program.
-  - **Versioning Workflow (`versioning.yml`)**:
-    - Automatically creates and pushes tags based on branch and event type.
+### 1. Build the Docker Image
+```bash
+docker build -t my-java-spring-project:local -f Dockerfile .
+```
+
+### 2. Run the Docker Container
+```bash
+docker run -d -p 80:80 --name my-java-spring-project my-java-spring-project:local
+```
+
+Access the application at [http://localhost](http://localhost).
+
+---
+
+## Jenkins Pipeline
+
+### 1. Configure Jenkins
+- Add the following environment variables in Jenkins:
+  - `DOCKER_BIN`: Path to Docker binary (e.g., `/usr/local/bin/docker`)
+  - `MAVEN_BIN`: Path to Maven binary (e.g., `/opt/homebrew/bin/mvn`)
+
+### 2. Run the Pipeline
+- Use the provided `Jenkinsfile` to automate the build, test, and deployment process.
+
+---
+
+## Endpoints
+
+### 1. Home Page
+- **URL**: `/`
+- **Description**: Displays the home page with a link to the tutorial page.
+
+### 2. Tutorial Page
+- **URL**: `/tutorial`
+- **Description**: Displays the tutorial page with dynamic content.
+
+### 3. Favicon
+- **URL**: `/favicon.ico`
+- **Description**: Handles favicon requests with no content.
+
+### 4. Error Page
+- **URL**: `/error`
+- **Description**: Displays a custom error message.
+
+---
+
+## Project Structure
+```
+src/
+├── main/
+│   ├── java/com/example/myjavaproject/
+│   │   ├── MyJavaProjectApplication.java
+│   │   ├── DefaultController.java
+│   │   ├── TutorialController.java
+│   │   ├── FaviconController.java
+│   │   └── CustomErrorController.java
+│   └── resources/
+│       ├── templates/
+│       │   ├── home.html
+│       │   └── tutorial.html
+│       └── application.properties
+├── test/
+│   └── java/com/example/myjavaproject/
+Dockerfile
+Jenkinsfile
+pom.xml
+```
+
+---
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
 
+---
+
 ## Author
-Created by **kaancorum**.
+**Kaan Corum**  
+Feel free to reach out for any questions or contributions!
