@@ -20,6 +20,8 @@ pipeline {
                     sh 'git --version'
                     echo "Maven version:"
                     sh 'mvn -v'
+                    echo "Docker version"
+                    sh 'docker --version'
                     echo "Branch Name: ${env.BRANCH_NAME}"
                 }
             }
