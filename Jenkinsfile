@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME = "my-java-nginx-project" // The base name of the project
+        PROJECT_NAME = "my-java-spring-project" // Updated project name
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
         DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
@@ -29,12 +29,13 @@ pipeline {
                 }
             }
         }
-        stage('Retrieve Branch Name') {
+        stage('Build Spring Boot JAR') {
             steps {
                 script {
-                    // Dynamically retrieve the branch name using git
-                    env.BRANCH_NAME = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    echo "Branch Name: ${env.BRANCH_NAME}"
+                    echo "Building the Spring Boot JAR file..."
+                    sh '''
+                        mvn clean package
+                    '''
                 }
             }
         }
