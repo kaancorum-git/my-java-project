@@ -20,8 +20,19 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                // Normal Pipeline'da mutlaka önce checkout yap
-                checkout scm
+                script {
+                    echo "Checking out the code..."
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']], // Replace 'main' with your default branch
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/kaancorum/my-java-project.git',
+                            refspec: '+refs/heads/*:refs/remotes/origin/*'
+                        ]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch', localBranch: 'main']] // Ensure the branch is checked out locally
+                    ])
+                }
             }
         }
         stage('Retrieve Branch Name') {
