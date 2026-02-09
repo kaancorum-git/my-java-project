@@ -14,7 +14,9 @@ pipeline {
                 script {
                     echo "Printing all environment variables..."
                     sh 'printenv | sort'
+                    echo "Git version:"
                     sh 'git --version'
+                    echo "Branch Name: ${env.BRANCH_NAME}"
                 }
             }
         }
@@ -24,13 +26,13 @@ pipeline {
                     echo "Checking out the code..."
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: '*/main']], // Replace 'main' with your default branch
+                        branches: [[name: '*/${env.BRANCH_NAME}']],
                         userRemoteConfigs: [[
                             url: 'https://github.com/kaancorum/my-java-project.git',
                             refspec: '+refs/heads/*:refs/remotes/origin/*'
                         ]],
                         doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'LocalBranch', localBranch: 'main']] // Ensure the branch is checked out locally
+                        extensions: [[$class: 'LocalBranch', localBranch: '${env.BRANCH_NAME}']] // Ensure the branch is checked out locally
                     ])
                 }
             }
@@ -47,7 +49,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building the Docker image..."
+                    echo "Building the Docker image for branch: ${env.BRANCH_NAME}..."
                     sh '''
                         docker build -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
                     '''
