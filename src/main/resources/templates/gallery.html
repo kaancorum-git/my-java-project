@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${title}">Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #ede7f6;
+            color: #333;
+        }
+        h1 {
+            color: #5e35b1;
+        }
+        .gallery {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .gallery img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 2px solid #5e35b1;
+            border-radius: 8px;
+        }
+        a {
+            text-decoration: none;
+            color: #5e35b1;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #7e57c2;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <p th:text="${description}"></p>
+    <div class="gallery">
+        <img src="/images/image.png" alt="Sample Image 1">
+        <img src="/images/image2.png" alt="Sample Image 2">
+    </div>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>

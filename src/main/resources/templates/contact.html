@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${title}">Contact</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #fce4ec;
+            color: #333;
+        }
+        h1 {
+            color: #d81b60;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <p th:text="${description}"></p>
+    <form>
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email"><br><br>
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message"></textarea><br><br>
+        <button type="submit">Send</button>
+    </form>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>

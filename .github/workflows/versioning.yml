@@ -26,12 +26,12 @@ jobs:
           CURRENT_TAG=$(git tag --sort=-v:refname | head -n 1)
           MAIN_TAG=$(git tag --sort=-v:refname | grep '^main-' | head -n 1)
           DEV_TAG=$(git tag --sort=-v:refname | grep '^dev-' | head -n 1)
-          echo "CURRENT_TAG=${CURRENT_TAG:-1.00}" >> $GITHUB_ENV
-          echo "MAIN_TAG=${MAIN_TAG:-1.00}" >> $GITHUB_ENV
-          echo "DEV_TAG=${DEV_TAG:-1.00}" >> $GITHUB_ENV
-          echo "Current tag: ${CURRENT_TAG:-1.00}"
-          echo "Main branch tag: ${MAIN_TAG:-1.00}"
-          echo "Dev branch tag: ${DEV_TAG:-1.00}"
+          echo "CURRENT_TAG=${CURRENT_TAG:-1.0.0}" >> $GITHUB_ENV
+          echo "MAIN_TAG=${MAIN_TAG:-1.0.0}" >> $GITHUB_ENV
+          echo "DEV_TAG=${DEV_TAG:-1.0.0}" >> $GITHUB_ENV
+          echo "Current tag: ${CURRENT_TAG:-1.0.0}"
+          echo "Main branch tag: ${MAIN_TAG:-1.0.0}"
+          echo "Dev branch tag: ${DEV_TAG:-1.0.0}"
 
       - name: Calculate new tag
         id: calculate_tag
@@ -39,7 +39,7 @@ jobs:
           CURRENT_TAG=${{ env.CURRENT_TAG }}
           MAIN_TAG=${{ env.MAIN_TAG }}
           DEV_TAG=${{ env.DEV_TAG }}
-          IFS='.' read -r MAJOR MINOR <<< "${CURRENT_TAG:-1.00}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT_TAG:-1.0.0}"
 
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -47,14 +47,18 @@ jobs:
               NEW_TAG="$((MAJOR + 1)).0.0"
             else
               # Increment minor version for direct pushes to main
-              MINOR=$(printf "%02d" $((10#$MINOR + 1)))
-              NEW_TAG="$MAJOR.$MINOR"
+              MINOR=$((MINOR + 1))
+              NEW_TAG="$MAJOR.$MINOR.0"
             fi
           elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             if [[ "${{ github.event_name }}" == "pull_request" ]]; then
               # Increment minor version for PRs merged into dev
-              MINOR=$(printf "%02d" $((10#$MINOR + 1)))
-              NEW_TAG="$MAJOR.$MINOR"
+              MINOR=$((MINOR + 1))
+              NEW_TAG="$MAJOR.$MINOR.0"
+            else
+              # Increment patch version for direct pushes to dev
+              PATCH=$((PATCH + 1))
+              NEW_TAG="$MAJOR.$MINOR.$PATCH"
             fi
           else
             # For feature branches, inherit the current dev tag
@@ -70,5 +74,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.JAVA_PRIV }}
         run: |
           echo "Creating and pushing tag: ${{ env.NEW_TAG }}"
-          git tag ${{ env.NEW_TAG }}
+                    git tag ${{ env.NEW_TAG }}
           git push origin ${{ env.NEW_TAG }}
