@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME = "my-java-spring-project" // Updated project name
-        DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
-        PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
-        DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
+        PROJECT_NAME = "my-java-spring-project"
+        DOCKER_BIN = "/usr/local/bin/docker"
+        MAVEN_BIN = "/opt/homebrew/bin/mvn" // Maven'ın yolu
+        PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven ve Docker ekle
+        DOCKER_HUB_CREDENTIALS_USR = "kncrm"
         BRANCH_NAME = "${env.BRANCH_NAME}"
     }
 
@@ -17,6 +18,8 @@ pipeline {
                     sh 'printenv | sort'
                     echo "Git version:"
                     sh 'git --version'
+                    echo "Maven version:"
+                    sh 'mvn -v'
                     echo "Branch Name: ${env.BRANCH_NAME}"
                 }
             }
@@ -25,7 +28,7 @@ pipeline {
             steps {
                 script {
                     echo "Checking out the code..."
-                    checkout scm // Simplified checkout step
+                    checkout scm
                 }
             }
         }
