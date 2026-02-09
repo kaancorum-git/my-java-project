@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     sh 'uname -a'
-	•	            sh 'ls -la /opt/homebrew || true'
+	•	            sh 'ls -la /opt/homebrew'
                     sh 'which mvn || true'
                     echo "Printing all environment variables..."
                     sh 'printenv | sort'
