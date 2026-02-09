@@ -5,9 +5,8 @@ pipeline {
         PROJECT_NAME = "my-java-nginx-project" // The name of the project
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
-        //DOCKER_HUB_CREDENTIALS = credentials('DOCKER_HUB_CREDENTIALS') // Jenkins credentials ID for Docker Hub
-        DOCKER_HUB_CREDENTIALS_USR="kncrm"
-    }       
+        DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
+    }
 
     stages {
         stage('Info') {
@@ -37,12 +36,35 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    echo "Logging in to Docker Hub..."
-                    // echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin
-                    // echo "Tagging and pushing the Docker image to Docker Hub..."
+                    echo "Tagging and pushing the Docker image to Docker Hub..."
                     sh '''
                         docker tag ${PROJECT_NAME}:latest ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
                         docker push ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                    '''
+                }
+            }
+        }
+        stage('Pull and Run Docker Image') {
+            steps {
+                script {
+                    echo "Pulling the Docker image from Docker Hub..."
+                    sh '''
+                        docker pull ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                    '''
+
+                    echo "Stopping any existing container..."
+                    sh '''
+                        existing_container=$(docker ps --filter "name=${PROJECT_NAME}" --format "{{.ID}}")
+                        if [ ! -z "$existing_container" ]; then
+                            docker stop $existing_container
+                            docker rm $existing_container
+                        fi
+                    '''
+
+                    echo "Running the Docker container..."
+                    sh '''
+                        docker run -d -p 80:80 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                        docker ps -a
                     '''
                 }
             }
