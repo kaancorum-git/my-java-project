@@ -25,7 +25,7 @@ pipeline {
                     echo "Git version:"
                     sh 'git --version'
                     echo "Maven version:"
-                    sh 'mvn-v' // MAVEN_BIN kullanıldı
+                    sh 'mvn -v' // MAVEN_BIN kullanıldı
                     echo "Docker version:"
                     sh 'docker --version'
                     sh 'which docker'
