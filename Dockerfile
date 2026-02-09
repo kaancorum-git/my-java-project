@@ -10,8 +10,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copy static files to the default Nginx directory
 COPY static/ /usr/share/nginx/html/tutorial/
 
-# Generate a random 5-digit number and append it to the index.html file
-RUN sh -c 'echo "<p>Random Number: $((RANDOM % 90000 + 10000))</p>" >> /usr/share/nginx/html/tutorial/index.html'
+# Generate a random 5-digit number using shuf and append it to the index.html file
+RUN sh -c 'echo "<p>Random Number: $(shuf -i 10000-99999 -n 1)</p>" >> /usr/share/nginx/html/tutorial/index.html'
 
 # Expose port 80 for Nginx
 EXPOSE 80
