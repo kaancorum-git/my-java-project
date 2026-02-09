@@ -3,7 +3,11 @@ pipeline {
 
     environment {
         PROJECT_NAME = "my-java-spring-project"
-        MAVEN_BIN = "/opt/homebrew/bin/mvn" // Maven'ın yolu
+        DOCKER_BIN = "/usr/local/bin/docker"
+        MAVEN_BIN  = "/opt/homebrew/bin/mvn"
+        PATH = "${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:" +
+           "${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}:" +
+           "${env.PATH}"
         PATH = "${env.PATH}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven'ın bin dizinini ekle
         DOCKER_HUB_CREDENTIALS_USR = "kncrm"
         BRANCH_NAME = "${env.BRANCH_NAME}"
@@ -21,10 +25,22 @@ pipeline {
                     echo "Git version:"
                     sh 'git --version'
                     echo "Maven version:"
-                    sh '${MAVEN_BIN} -v' // MAVEN_BIN kullanıldı
+                    sh 'mvn-v' // MAVEN_BIN kullanıldı
                     echo "Docker version:"
                     sh 'docker --version'
+                    sh 'which docker'
                     echo "Branch Name: ${env.BRANCH_NAME}"
+                }
+            }
+        }
+        stage('Prepare Build Info') {
+            steps {
+                script {
+                    echo "Writing build info..."
+                    sh '''
+                        echo "build.number=${BUILD_NUMBER}" > build-info.properties
+                        echo "branch.name=${BRANCH_NAME}" >> build-info.properties
+                    '''
                 }
             }
         }
@@ -41,7 +57,7 @@ pipeline {
                 script {
                     echo "Building the Spring Boot JAR file..."
                     sh '''
-                        ${MAVEN_BIN} clean package // MAVEN_BIN kullanıldı
+                        ${MAVEN_BIN} clean package
                     '''
                 }
             }
@@ -51,7 +67,7 @@ pipeline {
                 script {
                     echo "Building the Docker image for branch: ${env.BRANCH_NAME}..."
                     sh '''
-                        docker build -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
+                        docker build --build-arg BUILD_NUMBER=${BUILD_NUMBER} --build-arg BRANCH_NAME=${BRANCH_NAME} -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
                     '''
                 }
             }

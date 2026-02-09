@@ -10,6 +10,12 @@ RUN pwd
 # Debugging: List files in the target directory
 RUN ls -l
 
+# Copy build info to the container
+ARG BUILD_NUMBER
+ARG BRANCH_NAME
+RUN echo "build.number=${BUILD_NUMBER}" > /app/build-info.properties
+RUN echo "branch.name=${BRANCH_NAME}" >> /app/build-info.properties
+
 # Copy the repackaged JAR file to the container
 COPY target/my-java-project-1.0.0.jar app.jar
 
