@@ -3,9 +3,10 @@ pipeline {
 
     environment {
         PROJECT_NAME = "my-java-spring-project"
-        DOCKER_BIN = "/usr/local/bin/docker"
-        MAVEN_BIN = "/opt/homebrew/bin/mvn" // Maven'ın yolu
-        PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven ve Docker ekle
+        //DOCKER_BIN = "/usr/local/bin/docker" // Docker'ın yolu
+        DOCKER_HOME = "/usr/local"
+        MAVEN_HOME = "/opt/homebrew" // Maven'ın yolu
+        //PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}:${env.MAVEN_BIN.substring(0, env.MAVEN_BIN.lastIndexOf('/'))}" // PATH'e Maven ve Docker ekle
         DOCKER_HUB_CREDENTIALS_USR = "kncrm"
         BRANCH_NAME = "${env.BRANCH_NAME}"
     }
@@ -19,9 +20,9 @@ pipeline {
                     echo "Git version:"
                     sh 'git --version'
                     echo "Maven version:"
-                    sh 'mvn -v'
-                    echo "Docker version"
-                    sh 'docker --version'
+                    sh 'mvn -v' // mvn doğrudan çalışacak
+                    echo "Docker version:"
+                    sh 'docker --version' // docker doğrudan çalışacak
                     echo "Branch Name: ${env.BRANCH_NAME}"
                 }
             }
@@ -39,7 +40,7 @@ pipeline {
                 script {
                     echo "Building the Spring Boot JAR file..."
                     sh '''
-                        mvn clean package
+                        mvn clean package // mvn doğrudan çalışacak
                     '''
                 }
             }
