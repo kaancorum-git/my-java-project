@@ -9,17 +9,20 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Debug Environment Variables') {
             steps {
                 script {
-                    echo "Checking out the code..."
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/${env.BRANCH_NAME}']],
-                        userRemoteConfigs: [[url: 'https://github.com/kaancorum/my-java-project.git']]
-                    ])
+                    echo "Printing all environment variables..."
+                    sh 'printenv | sort'
                 }
             }
+        }
+        stage('Checkout') {
+            steps {
+                // Normal Pipeline'da mutlaka önce checkout yap
+                checkout scm
+            }
+        }
         }
         stage('Retrieve Branch Name') {
             steps {
