@@ -15,6 +15,9 @@ pipeline {
         stage('Debug Environment Variables') {
             steps {
                 script {
+                    sh 'uname -a'
+	•	            sh 'ls -la /opt/homebrew || true'
+                    sh 'which mvn || true'
                     echo "Printing all environment variables..."
                     sh 'printenv | sort'
                     echo "Git version:"
