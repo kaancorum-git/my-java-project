@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME = "my-java-nginx-project" // The name of the project
+        PROJECT_NAME = "my-java-nginx-project" // The base name of the project
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
         DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
+        BRANCH_NAME = "${env.BRANCH_NAME ?: 'latest'}" // Use the branch name or default to 'latest'
     }
 
     stages {
@@ -17,6 +18,7 @@ pipeline {
                         echo "Path: $PATH"
                         echo "Docker binary: $DOCKER_BIN"
                         echo "Project name: $PROJECT_NAME"
+                        echo "Branch name: $BRANCH_NAME"
                         which docker
                         docker --version
                     '''
@@ -28,7 +30,7 @@ pipeline {
                 script {
                     echo "Building the Docker image..."
                     sh '''
-                        docker build -t ${PROJECT_NAME}:latest -f Dockerfile .
+                        docker build -t ${PROJECT_NAME}:${BRANCH_NAME} -f Dockerfile .
                     '''
                 }
             }
@@ -38,8 +40,8 @@ pipeline {
                 script {
                     echo "Tagging and pushing the Docker image to Docker Hub..."
                     sh '''
-                        docker tag ${PROJECT_NAME}:latest ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
-                        docker push ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                        docker tag ${PROJECT_NAME}:${BRANCH_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
+                        docker push ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
                     '''
                 }
             }
@@ -49,7 +51,7 @@ pipeline {
                 script {
                     echo "Pulling the Docker image from Docker Hub..."
                     sh '''
-                        docker pull ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                        docker pull ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
                     '''
 
                     echo "Stopping any existing container..."
@@ -63,7 +65,7 @@ pipeline {
 
                     echo "Running the Docker container..."
                     sh '''
-                        docker run -d -p 80:80 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:latest
+                        docker run -d -p 80:80 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
                         docker ps -a
                     '''
                 }
