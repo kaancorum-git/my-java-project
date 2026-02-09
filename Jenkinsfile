@@ -6,7 +6,7 @@ pipeline {
         DOCKER_BIN = "/usr/local/bin/docker" // Path to the Docker binary
         PATH = "${env.PATH}:${env.DOCKER_BIN.substring(0, env.DOCKER_BIN.lastIndexOf('/'))}" // Add the directory of DOCKER_BIN to the PATH globally
         DOCKER_HUB_CREDENTIALS_USR = "kncrm" // Docker Hub username
-        BRANCH_NAME = "${env.BRANCH_NAME ?: 'latest'}" // Use the branch name or default to 'latest'
+        //BRANCH_NAME = "${env.BRANCH_NAME ?: 'latest'}" // Use the branch name or default to 'latest'
     }
 
     stages {
