@@ -185,6 +185,64 @@ curl -s http://localhost:8081/actuator/health/readiness
 curl -s http://localhost:8081/actuator/prometheus | head -n 20
 ```
 
+## Local Monitoring Stack (Safe Minimal Setup)
+
+This setup adds local Prometheus + Grafana containers without changing Jenkins or Docker Hub workflow.
+
+### Files
+- `docker-compose.yml`
+- `monitoring/prometheus.yml`
+
+### Ports and Service Names
+- App service: `app` on `8081`
+- Prometheus service: `prometheus` on `9090`
+- Grafana service: `grafana` on `3000`
+
+### Start Everything Locally
+
+```bash
+docker compose up -d --build
+```
+
+Check running services:
+
+```bash
+docker compose ps
+```
+
+### Verify Prometheus Scraping
+1. Open Prometheus targets page:
+  - http://localhost:9090/targets
+2. Confirm target `portfolio-app` is `UP`.
+3. Optional direct check:
+
+```bash
+curl -s http://localhost:8081/actuator/prometheus | head -n 20
+```
+
+### Open Grafana and Connect Prometheus
+1. Open Grafana:
+  - http://localhost:3000
+2. Login (default for local setup):
+  - username: `admin`
+  - password: `admin`
+3. Add data source:
+  - Type: `Prometheus`
+  - URL: `http://prometheus:9090`
+  - Save & Test
+
+### Stop Stack
+
+```bash
+docker compose down
+```
+
+To also remove Grafana local data:
+
+```bash
+docker compose down -v
+```
+
 ## Project Structure
 ```text
 src/main/java/com/example/portfolio/
