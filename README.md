@@ -226,6 +226,14 @@ curl -s http://localhost:8081/actuator/prometheus | head -n 20
 
 Prometheus scrapes the app via `host.docker.internal:8081` in this setup so it works with Jenkins running the app container via `docker run`.
 
+If your app is already running on `8081`, start only monitoring services to avoid app port conflicts:
+
+```bash
+docker compose up -d --no-deps prometheus grafana
+```
+
+After startup, target status may briefly appear as `unknown` (up to one scrape interval, default 15s). Then it should become `UP`.
+
 ### Open Grafana and Connect Prometheus
 1. Open Grafana:
   - http://localhost:3000
@@ -235,7 +243,7 @@ Prometheus scrapes the app via `host.docker.internal:8081` in this setup so it w
 3. Data source is auto-provisioned as `Prometheus` (no manual step required).
 4. A starter dashboard is auto-provisioned:
   - Dashboards -> Portfolio -> `Spring Boot Overview`
-  - Datasource UID is fixed to `prometheus` to avoid `No data` caused by unresolved datasource variables.
+  - Dashboard panels reference datasource by name (`Prometheus`) for maximum Grafana compatibility.
 5. If you want to add manually anyway:
   - Type: `Prometheus`
   - URL: `http://prometheus:9090`
