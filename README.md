@@ -1,125 +1,141 @@
-# My Java Spring Project
+# Portfolio Service (Spring Boot)
 
-This is a demo Spring Boot project showcasing a simple web application with Thymeleaf templates, Docker integration, and Jenkins pipeline automation.
+Production-like Spring Boot portfolio application with Thymeleaf UI, REST APIs, Docker image build/push, and Jenkins multibranch CI/CD deployment.
 
-## Features
-- **Spring Boot**: Backend framework for building Java-based web applications.
-- **Thymeleaf**: Templating engine for rendering dynamic HTML pages.
-- **Docker**: Containerization for easy deployment.
-- **Jenkins**: CI/CD pipeline for automated builds and deployments.
+## Highlights
+- Spring Boot 3.x, Java 17
+- Thymeleaf-based portfolio UI with menu navigation
+- Layered architecture: controller, service, model, config, exception
+- Operational endpoints for health and version
+- Docker-ready and Jenkins multibranch pipeline compatible
+- Runs on port `8081`
 
----
+## Tech Stack
+- Spring Boot Web
+- Thymeleaf
+- Spring Boot Actuator
+- Maven
+- Docker
+- Jenkins (multibranch pipeline)
 
 ## Prerequisites
-Make sure you have the following installed:
-- **Java 17** or higher
-- **Maven** (e.g., `/opt/homebrew/bin/mvn`)
-- **Docker** (e.g., `/usr/local/bin/docker`)
-- **Jenkins** (optional, for CI/CD)
+- Java 17+
+- Maven
+- Docker
+- Jenkins (optional for CI/CD)
 
----
+## Run Locally
+1. Build the application:
 
-## Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/my-java-project.git
-cd my-java-project
-```
-
-### 2. Build the Project
-Use Maven to build the project:
 ```bash
 mvn clean package
 ```
 
-### 3. Run the Application Locally
-Run the Spring Boot application:
+2. Run the jar:
+
 ```bash
 java -jar target/my-java-project-1.0.0.jar
 ```
 
-Access the application at [http://localhost:8080](http://localhost:8080).
+3. Open:
+- UI: http://localhost:8081/
+- Health: http://localhost:8081/api/health
+- Version: http://localhost:8081/api/version
 
----
+## Docker
+Build image:
 
-## Docker Integration
-
-### 1. Build the Docker Image
 ```bash
-docker build -t my-java-spring-project:local -f Dockerfile .
+docker build -t my-java-spring-boot-project:local -f Dockerfile .
 ```
 
-### 2. Run the Docker Container
+Run container:
+
 ```bash
-docker run -d -p 80:80 --name my-java-spring-project my-java-spring-project:local
+docker run -d -p 8081:8081 --name my-java-spring-boot-project my-java-spring-boot-project:local
 ```
 
-Access the application at [http://localhost](http://localhost).
-
----
+Access:
+- http://localhost:8081/
 
 ## Jenkins Pipeline
-
-### 1. Configure Jenkins
-- Add the following environment variables in Jenkins:
-  - `DOCKER_BIN`: Path to Docker binary (e.g., `/usr/local/bin/docker`)
-  - `MAVEN_BIN`: Path to Maven binary (e.g., `/opt/homebrew/bin/mvn`)
-
-### 2. Run the Pipeline
-- Use the provided `Jenkinsfile` to automate the build, test, and deployment process.
-
----
+The Jenkinsfile supports multibranch workflow and does the following:
+- Checkout branch source
+- Build jar with Maven
+- Build Docker image tagged by branch name
+- Push image to Docker Hub
+- Pull and run container mapped to `8081:8081`
 
 ## Endpoints
+### Web
+- `GET /` - Home page
+- `GET /gallery` - Portfolio gallery (supports category filter via query param)
+- `GET /about` - About page
+- `GET /services` - Services page
+- `GET /contact` - Contact page
 
-### 1. Home Page
-- **URL**: `/`
-- **Description**: Displays the home page with a link to the tutorial page.
+### API
+- `GET /api/health` - Application and system health details
+- `GET /api/version` - Build/version/branch/uptime info
+- `GET /api/info` - Service metadata
+- `GET /api/portfolio` - Portfolio items
+- `GET /api/portfolio/{id}` - Portfolio item detail
+- `GET /api/portfolio/category/{category}` - Filter by category
 
-### 2. Tutorial Page
-- **URL**: `/tutorial`
-- **Description**: Displays the tutorial page with dynamic content.
-
-### 3. Favicon
-- **URL**: `/favicon.ico`
-- **Description**: Handles favicon requests with no content.
-
-### 4. Error Page
-- **URL**: `/error`
-- **Description**: Displays a custom error message.
-
----
+### Actuator
+- `GET /actuator/health`
 
 ## Project Structure
-```
-src/
-├── main/
-│   ├── java/com/example/myjavaproject/
-│   │   ├── MyJavaProjectApplication.java
-│   │   ├── DefaultController.java
-│   │   ├── TutorialController.java
-│   │   ├── FaviconController.java
-│   │   └── CustomErrorController.java
-│   └── resources/
-│       ├── templates/
-│       │   ├── home.html
-│       │   └── tutorial.html
-│       └── application.properties
-├── test/
-│   └── java/com/example/myjavaproject/
-Dockerfile
-Jenkinsfile
-pom.xml
+```text
+src/main/java/com/example/portfolio/
+  PortfolioApplication.java
+  controller/
+    api/
+      HealthController.java
+      VersionController.java
+      PortfolioApiController.java
+    web/
+      HomeController.java
+      GalleryController.java
+      AboutController.java
+      ServicesController.java
+      ContactController.java
+  service/
+    BuildInfoService.java
+    HealthCheckService.java
+    PortfolioService.java
+  model/
+    dto/
+      BuildInfoDTO.java
+      HealthResponse.java
+      VersionResponse.java
+      PortfolioItem.java
+    enums/
+      HealthStatus.java
+  config/
+    WebConfig.java
+  exception/
+    GlobalExceptionHandler.java
+    ResourceNotFoundException.java
+
+src/main/resources/
+  application.properties
+  templates/
+    home.html
+    gallery.html
+    portfolio-detail.html
+    about.html
+    services.html
+    contact.html
+  static/
+    css/
+      portfolio.css
+    images/
 ```
 
----
+## Notes
+- Build metadata is read from `build-info.properties` (generated in Jenkins pipeline).
+- Default configured port is `8081`.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## Author
-**Kaan Corum**  
-Feel free to reach out for any questions or contributions!
+MIT
