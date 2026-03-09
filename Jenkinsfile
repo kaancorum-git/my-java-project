@@ -95,16 +95,20 @@ pipeline {
 
                     echo "Stopping any existing container..."
                     sh '''
-                        existing_container=$(docker ps --filter "name=${PROJECT_NAME}" --format "{{.ID}}")
-                        if [ ! -z "$existing_container" ];then
-                            docker stop $existing_container
-                            docker rm $existing_container
+                        existing_container=$(docker ps -a --filter "name=${PROJECT_NAME}" --format "{{.ID}}")
+                        if [ ! -z "$existing_container" ]; then
+                            docker stop $existing_container || true
+                            docker rm $existing_container || true
                         fi
+
+                        # If monitoring stack exists, stop and remove before fresh start
+                        docker compose down --remove-orphans || true
                     '''
 
                     echo "Running the Docker container..."
                     sh '''
                         docker run -d -p 8081:8081 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
+                        docker compose up -d --no-deps prometheus grafana
                         docker ps -a
                     '''
                 }

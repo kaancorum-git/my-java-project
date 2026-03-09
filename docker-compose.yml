@@ -39,6 +39,8 @@ services:
     depends_on:
       - prometheus
     volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafana-storage:/var/lib/grafana
     restart: unless-stopped
 

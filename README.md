@@ -64,7 +64,9 @@ The Jenkinsfile supports multibranch workflow and does the following:
 - Build jar with Maven
 - Build Docker image tagged by branch name
 - Push image to Docker Hub
-- Pull and run container mapped to `8081:8081`
+- Pull and run app container mapped to `8081:8081`
+- Stop/remove existing monitoring stack if present (`docker compose down --remove-orphans`)
+- Start Prometheus and Grafana automatically (`docker compose up -d --no-deps prometheus grafana`)
 
 ## Endpoints
 ### Web
@@ -220,13 +222,18 @@ docker compose ps
 curl -s http://localhost:8081/actuator/prometheus | head -n 20
 ```
 
+Prometheus scrapes the app via `host.docker.internal:8081` in this setup so it works with Jenkins running the app container via `docker run`.
+
 ### Open Grafana and Connect Prometheus
 1. Open Grafana:
   - http://localhost:3000
 2. Login (default for local setup):
   - username: `admin`
   - password: `admin`
-3. Add data source:
+3. Data source is auto-provisioned as `Prometheus` (no manual step required).
+4. A starter dashboard is auto-provisioned:
+  - Dashboards -> Portfolio -> `Spring Boot Overview`
+5. If you want to add manually anyway:
   - Type: `Prometheus`
   - URL: `http://prometheus:9090`
   - Save & Test
@@ -241,6 +248,13 @@ To also remove Grafana local data:
 
 ```bash
 docker compose down -v
+```
+
+If Grafana login does not accept `admin/admin`, it usually means credentials were changed previously and persisted in volume data. For a full local reset, use:
+
+```bash
+docker compose down -v
+docker compose up -d --build
 ```
 
 ## Project Structure
