@@ -84,6 +84,50 @@ The Jenkinsfile supports multibranch workflow and does the following:
 
 ### Actuator
 - `GET /actuator/health`
+- `GET /actuator/health/liveness`
+- `GET /actuator/health/readiness`
+- `GET /actuator/info`
+- `GET /actuator/prometheus`
+
+## Local Verification (Probes)
+1. Start the app:
+
+```bash
+java -jar target/my-java-project-1.0.0.jar
+```
+
+2. Verify probe endpoints:
+
+```bash
+curl -s http://localhost:8081/actuator/health | jq
+curl -s http://localhost:8081/actuator/health/liveness | jq
+curl -s http://localhost:8081/actuator/health/readiness | jq
+curl -s http://localhost:8081/actuator/info | jq
+curl -s http://localhost:8081/actuator/prometheus | head -n 20
+```
+
+If `jq` is not installed, run the same commands without `| jq`.
+
+## Kubernetes Probe Mapping (Later)
+When you deploy to Kubernetes, map probes directly to actuator health groups:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8081
+  initialDelaySeconds: 20
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8081
+  initialDelaySeconds: 10
+  periodSeconds: 10
+```
+
+This keeps liveness/readiness under actuator health and does not require any Docker or Jenkins workflow changes.
 
 ## Project Structure
 ```text
