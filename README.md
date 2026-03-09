@@ -129,6 +129,59 @@ readinessProbe:
 
 This keeps liveness/readiness under actuator health and does not require any Docker or Jenkins workflow changes.
 
+## Environment-Specific Actuator Exposure
+
+### application-dev.yml
+- Exposes broader operational endpoints for local debugging:
+  - `health, info, metrics, prometheus, env, configprops, loggers, threaddump`
+- Health details: `always`
+
+### application-prod.yml
+- Exposes minimum safe production endpoints:
+  - `health, info, prometheus`
+- Health details: `never`
+
+### Default Behavior
+- Base `application.properties` is safe by default and keeps exposure minimal.
+- If no profile is specified, the app still runs safely on port `8081`.
+
+### Run with Profile
+
+Run dev profile:
+
+```bash
+java -jar target/my-java-project-1.0.0.jar --spring.profiles.active=dev
+```
+
+Run prod profile:
+
+```bash
+java -jar target/my-java-project-1.0.0.jar --spring.profiles.active=prod
+```
+
+### Profile Test Commands
+
+Dev checks:
+
+```bash
+curl -s http://localhost:8081/actuator
+curl -s http://localhost:8081/actuator/env
+curl -s http://localhost:8081/actuator/metrics
+curl -s http://localhost:8081/actuator/loggers
+```
+
+Prod checks (should be limited):
+
+```bash
+curl -s http://localhost:8081/actuator
+curl -i http://localhost:8081/actuator/env
+curl -i http://localhost:8081/actuator/metrics
+curl -s http://localhost:8081/actuator/health
+curl -s http://localhost:8081/actuator/health/liveness
+curl -s http://localhost:8081/actuator/health/readiness
+curl -s http://localhost:8081/actuator/prometheus | head -n 20
+```
+
 ## Project Structure
 ```text
 src/main/java/com/example/portfolio/

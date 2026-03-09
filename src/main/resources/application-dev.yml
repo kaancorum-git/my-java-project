@@ -1,0 +1,12 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops,loggers,threaddump
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.portfolio: DEBUG
