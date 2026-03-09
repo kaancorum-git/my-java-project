@@ -9,14 +9,12 @@ services:
         BUILD_NUMBER: local
         BRANCH_NAME: local
     image: my-java-spring-boot-project:local
-    container_name: portfolio-app
     ports:
       - "8081:8081"
     restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: portfolio-prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -30,7 +28,6 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: portfolio-grafana
     ports:
       - "3000:3000"
     environment:

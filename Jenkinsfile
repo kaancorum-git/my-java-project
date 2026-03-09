@@ -112,6 +112,9 @@ pipeline {
                         # If monitoring stack exists, stop and remove before fresh start
                         docker compose down --remove-orphans || true
 
+                        # Backward compatibility cleanup for old fixed compose container names
+                        docker rm -f portfolio-prometheus portfolio-grafana portfolio-app 2>/dev/null || true
+
                         # Final check before run
                         in_use_after_cleanup=$(docker ps -q --filter "publish=8081")
                         if [ ! -z "$in_use_after_cleanup" ]; then

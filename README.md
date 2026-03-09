@@ -68,6 +68,7 @@ The Jenkinsfile supports multibranch workflow and does the following:
 - Before app run, automatically stop/remove any container that already publishes `8081`
 - Stop/remove existing monitoring stack if present (`docker compose down --remove-orphans`)
 - Start Prometheus and Grafana automatically (`docker compose up -d --no-deps prometheus grafana`)
+- Compose services use project-scoped auto names (no fixed `container_name`) to avoid global name conflicts.
 
 ## Endpoints
 ### Web
