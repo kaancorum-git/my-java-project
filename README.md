@@ -142,8 +142,8 @@ This keeps liveness/readiness under actuator health and does not require any Doc
 - Health details: `never`
 
 ### Default Behavior
-- Base `application.properties` is safe by default and keeps exposure minimal.
-- If no profile is specified, the app still runs safely on port `8081`.
+- Base `application.properties` now defaults to `dev` profile.
+- If no profile is specified, application starts on port `8081` with `dev` actuator exposure.
 
 ### Run with Profile
 
