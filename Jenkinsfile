@@ -101,8 +101,24 @@ pipeline {
                             docker rm $existing_container || true
                         fi
 
+                        # Safety guard: stop/remove any container publishing host port 8081
+                        port_8081_containers=$(docker ps -aq --filter "publish=8081")
+                        if [ ! -z "$port_8081_containers" ]; then
+                            echo "Found containers publishing port 8081. Cleaning up..."
+                            docker stop $port_8081_containers || true
+                            docker rm $port_8081_containers || true
+                        fi
+
                         # If monitoring stack exists, stop and remove before fresh start
                         docker compose down --remove-orphans || true
+
+                        # Final check before run
+                        in_use_after_cleanup=$(docker ps -q --filter "publish=8081")
+                        if [ ! -z "$in_use_after_cleanup" ]; then
+                            echo "ERROR: Port 8081 is still in use after cleanup."
+                            docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
+                            exit 1
+                        fi
                     '''
 
                     echo "Running the Docker container..."

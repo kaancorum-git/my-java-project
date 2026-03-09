@@ -65,6 +65,7 @@ The Jenkinsfile supports multibranch workflow and does the following:
 - Build Docker image tagged by branch name
 - Push image to Docker Hub
 - Pull and run app container mapped to `8081:8081`
+- Before app run, automatically stop/remove any container that already publishes `8081`
 - Stop/remove existing monitoring stack if present (`docker compose down --remove-orphans`)
 - Start Prometheus and Grafana automatically (`docker compose up -d --no-deps prometheus grafana`)
 
