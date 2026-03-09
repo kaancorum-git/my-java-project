@@ -104,7 +104,7 @@ pipeline {
 
                     echo "Running the Docker container..."
                     sh '''
-                        docker run -d -p 80:80 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
+                        docker run -d -p 8081:8081 --name ${PROJECT_NAME} ${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:${BRANCH_NAME}
                         docker ps -a
                     '''
                 }
