@@ -235,6 +235,7 @@ Prometheus scrapes the app via `host.docker.internal:8081` in this setup so it w
 3. Data source is auto-provisioned as `Prometheus` (no manual step required).
 4. A starter dashboard is auto-provisioned:
   - Dashboards -> Portfolio -> `Spring Boot Overview`
+  - Datasource UID is fixed to `prometheus` to avoid `No data` caused by unresolved datasource variables.
 5. If you want to add manually anyway:
   - Type: `Prometheus`
   - URL: `http://prometheus:9090`
@@ -257,6 +258,12 @@ If Grafana login does not accept `admin/admin`, it usually means credentials wer
 ```bash
 docker compose down -v
 docker compose up -d --build
+```
+
+If dashboard still shows `No data` after changes, restart Grafana provisioning:
+
+```bash
+docker compose up -d --force-recreate grafana
 ```
 
 ## Project Structure
