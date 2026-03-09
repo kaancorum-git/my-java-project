@@ -26,7 +26,7 @@ pipeline {
                     sh 'printenv | sort'
                     echo "Git version:"
                     sh 'git --version'
-                    echo "Maven version:"
+                    echo "Maven version:a"
                     sh 'mvn -v' // MAVEN_BIN kullanıldı
                     echo "Docker version:"
                     sh 'docker --version'
