@@ -3,7 +3,7 @@ pipeline {
 
     environment {
 
-        PROJECT_NAME = "my-java-spring-project"
+        PROJECT_NAME = "my-java-spring-boot-project"
         JAVA_HOME  = "/opt/homebrew/opt/openjdk@17"
         DOCKER_BIN = "/usr/local/bin/docker"
         MAVEN_BIN  = "/opt/homebrew/bin/mvn"
