@@ -1,48 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title}">Gallery</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #ede7f6;
-            color: #333;
-        }
-        h1 {
-            color: #5e35b1;
-        }
-        .gallery {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .gallery img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border: 2px solid #5e35b1;
-            border-radius: 8px;
-        }
-        a {
-            text-decoration: none;
-            color: #5e35b1;
-            font-weight: bold;
-        }
-        a:hover {
-            color: #7e57c2;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Portfolio Gallery</title>
+    <link rel="stylesheet" href="/css/portfolio.css">
 </head>
 <body>
-    <h1 th:text="${title}"></h1>
-    <p th:text="${description}"></p>
-    <div class="gallery">
-        <img src="/images/image.png" alt="Sample Image 1">
-        <img src="/images/image2.png" alt="Sample Image 2">
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/gallery">Portfolio</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 th:text="${title}">Portfolio Gallery</h1>
+            <p class="subtitle" th:text="${description}">Explore my projects and work</p>
+        </header>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="/gallery" style="margin: 0 0.5rem; padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 4px; text-decoration: none;">All</a>
+            <a href="/gallery?category=Backend" style="margin: 0 0.5rem; padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 4px; text-decoration: none;">Backend</a>
+            <a href="/gallery?category=DevOps" style="margin: 0 0.5rem; padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 4px; text-decoration: none;">DevOps</a>
+            <a href="/gallery?category=Full Stack" style="margin: 0 0.5rem; padding: 0.5rem 1rem; background: #e2e8f0; border-radius: 4px; text-decoration: none;">Full Stack</a>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="portfolio-item" th:each="item : ${portfolioItems}">
+                <img th:src="${item.imageUrl}" th:alt="${item.title}" 
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="portfolio-content">
+                    <h3 th:text="${item.title}">Project Title</h3>
+                    <p th:text="${item.description}">Project description</p>
+                    <p style="color: #2563eb; font-weight: 600; font-size: 0.875rem;" th:text="${item.category}">Category</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag" th:each="tech : ${item.technologies}" th:text="${tech}">Tech</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(portfolioItems)}" style="text-align: center; padding: 3rem;">
+            <p style="font-size: 1.2rem; color: #64748b;">No portfolio items found in this category.</p>
+        </div>
     </div>
-    <p><a href="/">Back to Home</a></p>
+
+    <footer>
+        <p>&copy; 2026 Kaan Corum | Portfolio Service v1.0.0</p>
+    </footer>
 </body>
 </html>

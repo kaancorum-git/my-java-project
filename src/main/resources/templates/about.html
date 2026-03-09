@@ -1,22 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title}">About</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #e3f2fd;
-            color: #333;
-        }
-        h1 {
-            color: #1e88e5;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">About Me</title>
+    <link rel="stylesheet" href="/css/portfolio.css">
 </head>
 <body>
-    <h1 th:text="${title}"></h1>
-    <p th:text="${description}"></p>
-    <p><a href="/">Back to Home</a></p>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/gallery">Portfolio</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 th:text="${title}">About Me</h1>
+            <p class="subtitle" th:text="${description}">Learn more about my skills and experience</p>
+        </header>
+
+        <div class="card" style="max-width: 800px; margin: 2rem auto;">
+            <h2 style="color: var(--dark-bg); margin-bottom: 1rem;" th:text="${name}">Kaan Corum</h2>
+            <p style="font-size: 1.1rem; color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem;" 
+               th:text="${role}">Software Engineer</p>
+            <p style="line-height: 1.8; color: var(--text-light); font-size: 1.1rem;" 
+               th:text="${bio}">Bio text goes here</p>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 3rem; margin-bottom: 1.5rem;">Technical Skills</h2>
+        <div class="info-section">
+            <div class="info-box">
+                <h3>☕ Backend</h3>
+                <p>Java 17+, Spring Boot, Spring Cloud, Microservices, REST APIs, JPA/Hibernate</p>
+            </div>
+            <div class="info-box">
+                <h3>🐳 DevOps</h3>
+                <p>Docker, Kubernetes, Jenkins, CI/CD, Git, Maven, Linux</p>
+            </div>
+            <div class="info-box">
+                <h3>☁️ Cloud</h3>
+                <p>AWS, Azure, Cloud Native Architecture, Containerization, Orchestration</p>
+            </div>
+            <div class="info-box">
+                <h3>💾 Databases</h3>
+                <p>PostgreSQL, MySQL, MongoDB, Redis, Database Design, SQL Optimization</p>
+            </div>
+            <div class="info-box">
+                <h3>🛠️ Tools</h3>
+                <p>IntelliJ IDEA, VS Code, Postman, Swagger, SonarQube, Grafana</p>
+            </div>
+            <div class="info-box">
+                <h3>📚 Architecture</h3>
+                <p>Clean Architecture, Microservices, Design Patterns, REST, Event-Driven</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Kaan Corum | Portfolio Service v1.0.0</p>
+    </footer>
 </body>
 </html>

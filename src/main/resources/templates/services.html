@@ -1,27 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title}">Services</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f3e5f5;
-            color: #333;
-        }
-        h1 {
-            color: #8e24aa;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">My Services</title>
+    <link rel="stylesheet" href="/css/portfolio.css">
 </head>
 <body>
-    <h1 th:text="${title}"></h1>
-    <p th:text="${description}"></p>
-    <ul>
-        <li>Service 1: Description</li>
-        <li>Service 2: Description</li>
-        <li>Service 3: Description</li>
-    </ul>
-    <p><a href="/">Back to Home</a></p>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/gallery">Portfolio</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 th:text="${title}">My Services</h1>
+            <p class="subtitle" th:text="${description}">Professional services I offer</p>
+        </header>
+
+        <div class="services-grid">
+            <div class="service-card" th:each="service : ${services}">
+                <div class="service-icon" th:text="${service.icon}">💻</div>
+                <h3 th:text="${service.name}">Service Name</h3>
+                <p th:text="${service.description}">Service description</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem; text-align: center;">
+            <h2>💡 Why Work With Me?</h2>
+            <div class="info-section" style="margin-top: 2rem;">
+                <div class="info-box">
+                    <h3>⚡ Fast Delivery</h3>
+                    <p>Efficient development process with quick turnaround times</p>
+                </div>
+                <div class="info-box">
+                    <h3>✨ Quality Code</h3>
+                    <p>Clean, maintainable code following industry best practices</p>
+                </div>
+                <div class="info-box">
+                    <h3>🤝 Collaboration</h3>
+                    <p>Strong communication and teamwork skills</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Kaan Corum | Portfolio Service v1.0.0</p>
+    </footer>
 </body>
 </html>

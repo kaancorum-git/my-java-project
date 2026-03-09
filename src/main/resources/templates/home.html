@@ -1,47 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title}">Home</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1 {
-            color: #4CAF50;
-        }
-        a {
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        a:hover {
-            color: #45a049;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        .links a {
-            display: block;
-            margin: 10px 0;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Portfolio Home</title>
+    <link rel="stylesheet" href="/css/portfolio.css">
 </head>
 <body>
-    <h1 th:text="${title}"></h1>
-    <p th:text="${description}"></p>
-    <p>Build Number: <span th:text="${buildNumber}"></span></p>
-    <p>Branch Name: <span th:text="${branchName}"></span></p>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/gallery">Portfolio</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
 
-    <div class="links">
-        <h2>Explore Our Pages</h2>
-        <a href="/tutorial">Go to Tutorial Page</a>
-        <a href="/about">About Us</a>
-        <a href="/contact">Contact Us</a>
-        <a href="/services">Our Services</a>
-        <a href="/gallery">Gallery</a>
+    <div class="container">
+        <header>
+            <h1 th:text="${title}">Welcome to My Portfolio</h1>
+            <p class="subtitle" th:text="${description}">Professional Spring Boot Portfolio Application</p>
+            
+            <div class="build-info">
+                <span>Build: <span class="build-badge" th:text="${buildNumber}">N/A</span></span>
+                <span>Branch: <span class="build-badge" th:text="${branchName}">N/A</span></span>
+                <span>Uptime: <span class="build-badge" th:text="${uptime} + 's'">0s</span></span>
+            </div>
+        </header>
+
+        <div class="info-section">
+            <div class="info-box">
+                <h3>🚀 Modern Architecture</h3>
+                <p>Built with Spring Boot 3.x, following clean architecture principles and best practices</p>
+            </div>
+            <div class="info-box">
+                <h3>🐳 Docker Ready</h3>
+                <p>Fully containerized application with Docker and Jenkins CI/CD integration</p>
+            </div>
+            <div class="info-box">
+                <h3>☁️ Cloud Native</h3>
+                <p>Kubernetes-ready with health checks, metrics, and production monitoring</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem; text-align: center;">
+            <h2>🎯 Quick Links</h2>
+            <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <a href="/api/health" style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 4px; text-decoration: none;">Health Check</a>
+                <a href="/api/version" style="padding: 0.75rem 1.5rem; background-color: var(--success-color); color: white; border-radius: 4px; text-decoration: none;">Version Info</a>
+                <a href="/actuator/health" style="padding: 0.75rem 1.5rem; background-color: var(--warning-color); color: white; border-radius: 4px; text-decoration: none;">Actuator</a>
+            </div>
+        </div>
     </div>
+
+    <footer>
+        <p>&copy; 2026 Kaan Corum | Portfolio Service v1.0.0</p>
+    </footer>
 </body>
 </html>
