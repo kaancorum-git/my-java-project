@@ -5,7 +5,19 @@ management:
         include: health,info,metrics,prometheus,env,configprops,loggers,threaddump
   endpoint:
     health:
+      probes:
+        enabled: true
       show-details: always
+      group:
+        liveness:
+          include: livenessState,ping
+        readiness:
+          include: readinessState,ping
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
 logging:
   level:

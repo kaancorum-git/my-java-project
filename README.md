@@ -135,6 +135,9 @@ This keeps liveness/readiness under actuator health and does not require any Doc
 - Exposes broader operational endpoints for local debugging:
   - `health, info, metrics, prometheus, env, configprops, loggers, threaddump`
 - Health details: `always`
+- Kubernetes probe groups are enabled in dev:
+  - `/actuator/health/liveness`
+  - `/actuator/health/readiness`
 
 ### application-prod.yml
 - Exposes minimum safe production endpoints:
