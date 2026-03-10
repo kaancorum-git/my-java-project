@@ -326,5 +326,91 @@ src/main/resources/
 - Build metadata is read from `build-info.properties` (generated in Jenkins pipeline).
 - Default configured port is `8081`.
 
+## Kubernetes Deployment Option (Safe Minimal)
+
+This project now includes a minimal Kubernetes deployment option while keeping the existing Docker and Jenkins deployment flow unchanged.
+
+### Added Manifests
+- `k8s/deployment.yaml`
+- `k8s/service.yaml`
+
+Ingress is intentionally not included in the first minimal setup.
+
+### Deployment Manifest
+- Kind: `Deployment`
+- Name: `portfolio-app`
+- Replicas: `1`
+- Container port: `8081`
+- Image example: `kncrm/my-java-spring-boot-project:main`
+
+Update the image tag to match the image built and pushed by your Jenkins branch pipeline.
+
+### Service Manifest
+- Kind: `Service`
+- Name: `portfolio-service`
+- Type: `ClusterIP` (safe internal default)
+- Service port: `8081`
+- Target port: container named port `http` (`8081`)
+
+### Probe Mapping (Actuator)
+Kubernetes probes use existing actuator endpoints:
+
+- Liveness: `/actuator/health/liveness`
+- Readiness: `/actuator/health/readiness`
+
+Probe defaults in deployment:
+
+- `livenessProbe.initialDelaySeconds: 30`
+- `readinessProbe.initialDelaySeconds: 10`
+- `periodSeconds: 10`
+- `timeoutSeconds: 2`
+- `failureThreshold: 3`
+
+### Apply and Test Locally
+
+Prerequisite: local Kubernetes cluster (for example, Docker Desktop Kubernetes, minikube, or kind).
+
+1. Apply manifests:
+
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+2. Wait for rollout:
+
+```bash
+kubectl rollout status deployment/portfolio-app
+```
+
+3. Check resources:
+
+```bash
+kubectl get pods
+kubectl get svc portfolio-service
+```
+
+4. Access app locally (without ingress) using port-forward:
+
+```bash
+kubectl port-forward svc/portfolio-service 8081:8081
+```
+
+5. Validate endpoints:
+
+```bash
+curl -s http://localhost:8081/actuator/health
+curl -s http://localhost:8081/actuator/health/liveness
+curl -s http://localhost:8081/actuator/health/readiness
+curl -s http://localhost:8081/actuator/info
+```
+
+### Optional Next Safe Improvements
+1. Add `resources.requests` and `resources.limits` in deployment.
+2. Add a dedicated Kubernetes namespace (for example, `portfolio`).
+3. Add ConfigMap/Secret separation for environment-specific values.
+4. Add a PodDisruptionBudget for safer maintenance operations.
+5. Add an Ingress only when external HTTP routing is required.
+
 ## License
 MIT
