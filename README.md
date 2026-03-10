@@ -69,6 +69,27 @@ The Jenkinsfile supports multibranch workflow and does the following:
 - Stop/remove existing monitoring stack if present (`docker compose down --remove-orphans`)
 - Start Prometheus and Grafana automatically (`docker compose up -d --no-deps prometheus grafana`)
 - Compose services use project-scoped auto names (no fixed `container_name`) to avoid global name conflicts.
+- Optional Kubernetes deploy stage is available and disabled by default (`DEPLOY_TO_K8S=false`).
+
+### Jenkins Kubernetes Parameters (Optional)
+- `DEPLOY_TO_K8S` (boolean, default `false`): enables Kubernetes deployment stage.
+- `DOCKER_SMOKE_BASE_URL` (string, default `http://localhost:8081`): base URL for Docker smoke tests.
+- `K8S_NAMESPACE` (string, default `default`): namespace for apply/rollout commands.
+- `KUBECONFIG_CREDENTIALS_ID` (string): Jenkins file credential ID containing kubeconfig.
+- `K8S_IMAGE_TAG` (string, optional): image tag override; if empty, pipeline uses `BRANCH_NAME`.
+
+When Kubernetes stage is enabled, pipeline will:
+- apply `k8s/deployment.yaml` and `k8s/service.yaml`
+- set deployment image to `${DOCKER_HUB_CREDENTIALS_USR}/${PROJECT_NAME}:<tag>`
+- wait for rollout and print pod/service status
+- run Kubernetes smoke tests automatically (`/actuator/health`, `/actuator/health/liveness`, `/actuator/health/readiness`, `/actuator/info`, `/actuator/prometheus`) via temporary port-forward
+
+Pipeline also runs Docker smoke tests automatically after container run:
+- checks `/actuator/health` reachability with retry
+- verifies liveness/readiness status is `UP`
+- verifies `/actuator/info` and `/actuator/prometheus` endpoints
+
+This keeps existing Docker-based deployment flow unchanged and adds Kubernetes as the next deployment option.
 
 ## Endpoints
 ### Web
